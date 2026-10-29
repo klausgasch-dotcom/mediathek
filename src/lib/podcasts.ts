@@ -77,7 +77,7 @@ async function getJson<T>(url: string): Promise<T> {
 }
 
 export const searchPodcasts = createServerFn({ method: "GET" })
-  .inputValidator((data: { term: string }) => ({ term: String(data.term ?? "").slice(0, 100) }))
+  .validator((data: { term: string }) => ({ term: String(data.term ?? "").slice(0, 100) }))
   .handler(async ({ data }) => {
     if (!data.term.trim()) return [] as Podcast[];
     const qs = new URLSearchParams({
@@ -138,7 +138,7 @@ function assertPublicUrl(raw: string) {
 }
 
 export const fetchFeedXml = createServerFn({ method: "GET" })
-  .inputValidator((data: { url: string }) => ({ url: String(data.url ?? "") }))
+  .validator((data: { url: string }) => ({ url: String(data.url ?? "") }))
   .handler(async ({ data }) => {
     let url = assertPublicUrl(data.url);
     // Weiterleitungen selbst verfolgen, damit auch jedes Ziel geprüft wird.
