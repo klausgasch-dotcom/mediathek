@@ -9,7 +9,8 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { AppShell } from "@/components/AppShell";
+import { PlayerProvider } from "@/player/PlayerProvider";
 import { Toaster } from "sonner";
 
 function NotFoundComponent() {
@@ -73,7 +74,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#141221" },
       { title: "Mediathek — Hören, Sehen, Vorlesen" },
       {
         name: "description",
@@ -95,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Nunito:wght@400;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
     ],
   }),
@@ -107,7 +109,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de">
+    <html lang="de" className="dark">
       <head>
         <HeadContent />
       </head>
@@ -124,12 +126,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SiteHeader />
-      <main className="min-h-[calc(100vh-200px)]">
-        <Outlet />
-      </main>
-      <SiteFooter />
-      <Toaster richColors position="top-center" />
+      <PlayerProvider>
+        <AppShell>
+          <Outlet />
+        </AppShell>
+      </PlayerProvider>
+      <Toaster theme="dark" richColors position="top-center" />
     </QueryClientProvider>
   );
 }
