@@ -34,7 +34,7 @@ function RadioPage() {
   useEffect(() => setInput(search.q ?? ""), [search.q]);
 
   const update = (patch: Partial<RadioSearch>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: RadioSearch) => ({ ...prev, ...patch }), replace: true });
 
   const {
     data = [],

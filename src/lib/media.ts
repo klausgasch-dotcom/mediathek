@@ -53,11 +53,7 @@ export type SearchResult = {
 };
 
 export type SearchSource =
-  | "librivox"
-  | "archive-audio"
-  | "archive-video"
-  | "commons-audio"
-  | "commons-video";
+  "librivox" | "archive-audio" | "archive-video" | "commons-audio" | "commons-video";
 
 export const SEARCH_SOURCES: { value: SearchSource; label: string; hint: string }[] = [
   {
@@ -283,8 +279,7 @@ export async function fetchWikipediaText(topic: string, lang = "de", full = fals
   if (!res.ok) throw new Error(`Wikipedia antwortet mit ${res.status}`);
   const json = await res.json();
   const page = Object.values(json?.query?.pages ?? {})[0] as
-    | { title?: string; extract?: string; missing?: string }
-    | undefined;
+    { title?: string; extract?: string; missing?: string } | undefined;
   if (!page || "missing" in page || !page.extract)
     throw new Error(`Kein Wikipedia-Artikel zu „${topic}“ gefunden.`);
   // Überschriften wie "== Geschichte ==" in Sätze umwandeln, damit sie natürlich klingen.
