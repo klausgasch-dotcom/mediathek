@@ -5,12 +5,17 @@ const STORAGE_KEY = "mediathek:playlist";
 
 type State = { items: MediaItem[]; current: number };
 
-function load(): MediaItem[] {
+function load(): State {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as MediaItem[]) : [];
+    if (!raw) return { items: [], current: -1 };
+    const parsed = JSON.parse(raw) as MediaItem[] | State;
+    // Ältere Version speicherte nur die Liste.
+    if (Array.isArray(parsed)) return { items: parsed, current: -1 };
+    const current = parsed.current < parsed.items.length ? parsed.current : -1;
+    return { items: parsed.items, current };
   } catch {
-    return [];
+    return { items: [], current: -1 };
   }
 }
 
@@ -20,7 +25,7 @@ export function usePlaylist() {
 
   // Erst im Browser laden (SSR kennt kein localStorage).
   useEffect(() => {
-    setState({ items: load(), current: -1 });
+    setState(load());
     setLoaded(true);
   }, []);
 
@@ -28,11 +33,14 @@ export function usePlaylist() {
     if (!loaded) return;
     try {
       // Blob-URLs sind nach dem Neuladen ungültig – lokale Einträge nicht speichern.
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items.filter((i) => !i.local)));
+      const items = state.items.filter((i) => !i.local);
+      const currentItem = state.items[state.current];
+      const current = currentItem && !currentItem.local ? items.indexOf(currentItem) : -1;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, current }));
     } catch {
       /* Speicher nicht verfügbar – Playlist gilt dann nur für diese Sitzung. */
     }
-  }, [state.items, loaded]);
+  }, [state, loaded]);
 
   const setCurrent = useCallback((current: number) => {
     setState((s) => ({ ...s, current: current >= 0 && current < s.items.length ? current : -1 }));
@@ -73,7 +81,16 @@ export function usePlaylist() {
 
   const clear = useCallback(() => setState({ items: [], current: -1 }), []);
 
-  return { items: state.items, current: state.current, setCurrent, add, remove, move, clear };
+  return {
+    items: state.items,
+    current: state.current,
+    loaded,
+    setCurrent,
+    add,
+    remove,
+    move,
+    clear,
+  };
 }
 
 export type Playlist = ReturnType<typeof usePlaylist>;

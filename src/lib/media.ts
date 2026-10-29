@@ -28,6 +28,13 @@ export type MediaItem = {
   local?: boolean;
   /** Dateiname zum Herunterladen eigener Aufnahmen */
   fileName?: string;
+  /** Livestream (Radio): keine Dauer, kein Spulen */
+  live?: boolean;
+  /** Herkunfts-ID (z. B. "radio:<uuid>"), um doppelte Einträge zu erkennen */
+  refId?: string;
+  /** Veröffentlichungsdatum (Podcast-Folgen) */
+  date?: string;
+  description?: string;
 };
 
 export type SearchResult = {
