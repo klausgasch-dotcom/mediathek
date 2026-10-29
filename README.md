@@ -30,6 +30,11 @@ docker build -t mediathek .
 docker run -p 3000:3000 mediathek
 ```
 
+## Veröffentlichen
+
+- **Vercel:** Repository bei Vercel importieren – fertig. Beim Build auf Vercel (`VERCEL=1`) erzeugt Nitro automatisch die passende Ausgabe (`.vercel/output`).
+- **Eigener Server / Docker:** `npm run build` erzeugt einen Node-Server unter `.output/server/index.mjs`, den das Dockerfile startet.
+
 ## Bekannte Grenzen
 
 - Vorgelesener Text lässt sich nicht als Audiodatei speichern. Die Sprachausgabe der Browser erlaubt das nicht.
